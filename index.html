@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmark - AI Model Performance Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-chart-line"></i>
+                <span>Benchmark</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-home"></i> لوحة التحكم
+                </a></li>
+                <li><a href="#tests" class="nav-link" data-section="tests">
+                    <i class="fas fa-vial"></i> الاختبارات
+                </a></li>
+                <li><a href="#models" class="nav-link" data-section="models">
+                    <i class="fas fa-robot"></i> النماذج
+                </a></li>
+                <li><a href="#leaderboard" class="nav-link" data-section="leaderboard">
+                    <i class="fas fa-trophy"></i> لوحة المتصدرين
+                </a></li>
+                <li><a href="#compare" class="nav-link" data-section="compare">
+                    <i class="fas fa-balance-scale"></i> المقارنة
+                </a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="section-header">
+                <h1>لوحة التحكم</h1>
+                <p>نظرة عامة على أداء النماذج والاختبارات</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon primary">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>النماذج النشطة</h3>
+                        <p class="stat-number" id="activeModels">12</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon secondary">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>الاختبارات المكتملة</h3>
+                        <p class="stat-number" id="completedTests">248</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon accent">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>متوسط الأداء</h3>
+                        <p class="stat-number" id="avgPerformance">87.5%</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon success">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>اختبارات قيد التشغيل</h3>
+                        <p class="stat-number" id="runningTests">3</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card glass-card">
+                    <h3>أداء النماذج - آخر 7 أيام</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+                <div class="chart-card glass-card">
+                    <h3>توزيع النتائج</h3>
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-section glass-card">
+                <h3>النشاط الأخير</h3>
+                <div class="activity-list" id="activityList">
+                    <div class="activity-item">
+                        <div class="activity-icon primary">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>اكتمل الاختبار: Text Generation Benchmark</h4>
+                            <p>النموذج: GPT-4 - النتيجة: 94.2%</p>
+                            <span class="activity-time">منذ 5 دقائق</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon secondary">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>بدء اختبار جديد: Code Completion</h4>
+                            <p>النموذج: Claude-3</p>
+                            <span class="activity-time">منذ 12 دقيقة</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon accent">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>إضافة نموذج جديد</h4>
+                            <p>Gemini Pro 1.5</p>
+                            <span class="activity-time">منذ ساعة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tests Section -->
+        <section id="tests" class="section">
+            <div class="section-header">
+                <h1>الاختبارات</h1>
+                <button class="btn btn-primary" id="createTestBtn">
+                    <i class="fas fa-plus"></i> إنشاء اختبار جديد
+                </button>
+            </div>
+
+            <div class="filters-bar glass-card">
+                <input type="text" class="search-input" placeholder="بحث في الاختبارات..." id="testSearch">
+                <select class="filter-select" id="testStatusFilter">
+                    <option value="all">جميع الحالات</option>
+                    <option value="running">قيد التشغيل</option>
+                    <option value="completed">مكتمل</option>
+                    <option value="pending">قيد الانتظار</option>
+                </select>
+                <select class="filter-select" id="testCategoryFilter">
+                    <option value="all">جميع الفئات</option>
+                    <option value="text">توليد النصوص</option>
+                    <option value="code">البرمجة</option>
+                    <option value="vision">الرؤية</option>
+                    <option value="reasoning">التفكير المنطقي</option>
+                </select>
+            </div>
+
+            <div class="tests-grid" id="testsGrid">
+                <div class="test-card glass-card">
+                    <div class="test-header">
+                        <h3>Text Generation Benchmark</h3>
+                        <span class="status-badge completed">مكتمل</span>
+                    </div>
+                    <p class="test-description">اختبار شامل لقدرات توليد النصوص والإبداع اللغوي</p>
+                    <div class="test-stats">
+                        <div class="test-stat">
+                            <span>النماذج المختبرة</span>
+                            <strong>8</strong>
+                        </div>
+                        <div class="test-stat">
+                            <span>متوسط الدقة</span>
+                            <strong>89.3%</strong>
+                        </div>
+                        <div class="test-stat">
+                            <span>الوقت</span>
+                            <strong>45 دقيقة</strong>
+                        </div>
+                    </div>
+                    <div class="test-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-eye"></i> عرض النتائج
+                        </button>
+                        <button class="btn btn-accent btn-sm">
+                            <i class="fas fa-redo"></i> إعادة التشغيل
+                        </button>
+                    </div>
+                </div>
+
+                <div class="test-card glass-card">
+                    <div class="test-header">
+                        <h3>Code Completion Test</h3>
+                        <span class="status-badge running">قيد التشغيل</span>
+                    </div>
+                    <p class="test-description">تقييم قدرة النماذج على إكمال الكود البرمجي</p>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                        <span class="progress-text">65% مكتمل</span>
+                    </div>
+                    <div class="test-stats">
+                        <div class="test-stat">
+                            <span>النماذج المختبرة</span>
+                            <strong>5 / 8</strong>
+                        </div>
+                        <div class="test-stat">
+                            <span>الوقت المتبقي</span>
+                            <strong>~15 دقيقة</strong>
+                        </div>
+                    </div>
+                    <div class="test-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-pause"></i> إيقاف مؤقت
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            <i class="fas fa-stop"></i> إيقاف
+                        </button>
+                    </div>
+                </div>
+
+                <div class="test-card glass-card">
+                    <div class="test-header">
+                        <h3>Visual Reasoning Challenge</h3>
+                        <span class="status-badge pending">قيد الانتظار</span>
+                    </div>
+                    <p class="test-description">اختبار قدرات التفكير المرئي وفهم الصور</p>
+                    <div class="test-stats">
+                        <div class="test-stat">
+                            <span>النماذج المختبرة</span>
+                            <strong>6</strong>
+                        </div>
+                        <div class="test-stat">
+                            <span>مجدول في</span>
+                            <strong>2 ساعة</strong>
+                        </div>
+                    </div>
+                    <div class="test-actions">
+                        <button class="btn btn-primary btn-sm">
+                            <i class="fas fa-play"></i> بدء الآن
+                        </button>
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-edit"></i> تعديل
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Models Section -->
+        <section id="models" class="section">
+            <div class="section-header">
+                <h1>النماذج</h1>
+                <button class="btn btn-primary" id="addModelBtn">
+                    <i class="fas fa-plus"></i> إضافة نموذج
+                </button>
+            </div>
+
+            <div class="models-grid" id="modelsGrid">
+                <div class="model-card glass-card">
+                    <div class="model-header">
+                        <div class="model-icon primary">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>GPT-4 Turbo</h3>
+                        <span class="status-badge active">نشط</span>
+                    </div>
+                    <div class="model-stats">
+                        <div class="model-stat">
+                            <span>الاختبارات</span>
+                            <strong>45</strong>
+                        </div>
+                        <div class="model-stat">
+                            <span>متوسط الدقة</span>
+                            <strong>94.2%</strong>
+                        </div>
+                        <div class="model-stat">
+                            <span>الترتيب</span>
+                            <strong>#1</strong>
+                        </div>
+                    </div>
+                    <div class="skill-bars">
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>توليد النصوص</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill primary" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>البرمجة</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill secondary" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>التفكير المنطقي</span>
+                                <span>96%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill accent" style="width: 96%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="model-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-chart-bar"></i> التفاصيل
+                        </button>
+                        <button class="btn btn-accent btn-sm">
+                            <i class="fas fa-play"></i> اختبار
+                        </button>
+                    </div>
+                </div>
+
+                <div class="model-card glass-card">
+                    <div class="model-header">
+                        <div class="model-icon secondary">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>Claude 3 Opus</h3>
+                        <span class="status-badge active">نشط</span>
+                    </div>
+                    <div class="model-stats">
+                        <div class="model-stat">
+                            <span>الاختبارات</span>
+                            <strong>42</strong>
+                        </div>
+                        <div class="model-stat">
+                            <span>متوسط الدقة</span>
+                            <strong>93.8%</strong>
+                        </div>
+                        <div class="model-stat">
+                            <span>الترتيب</span>
+                            <strong>#2</strong>
+                        </div>
+                    </div>
+                    <div class="skill-bars">
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>توليد النصوص</span>
+                                <span>94%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill primary" style="width: 94%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>البرمجة</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill secondary" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>التفكير المنطقي</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill accent" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="model-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-chart-bar"></i> التفاصيل
+                        </button>
+                        <button class="btn btn-accent btn-sm">
+                            <i class="fas fa-play"></i> اختبار
+                        </button>
+                    </div>
+                </div>
+
+                <div class="model-card glass-card">
+                    <div class="model-header">
+                        <div class="model-icon accent">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <h3>Gemini Pro 1.5</h3>
+                        <span class="status-badge active">نشط</span>
+                    </div>
+                    <div class="model-stats">
+                        <div class="model-stat">
+                            <span>الاختبارات</span>
+                            <strong>38</strong>
+                        </div>
+                        <div class="model-stat">
+                            <span>متوسط الدقة</span>
+                            <strong>91.5%</strong>
+                        </div>
+                        <div class="model-stat">
+                            <span>الترتيب</span>
+                            <strong>#3</strong>
+                        </div>
+                    </div>
+                    <div class="skill-bars">
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>توليد النصوص</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill primary" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>البرمجة</span>
+                                <span>89%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill secondary" style="width: 89%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-info">
+                                <span>التفكير المنطقي</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-fill accent" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="model-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-chart-bar"></i> التفاصيل
+                        </button>
+                        <button class="btn btn-accent btn-sm">
+                            <i class="fas fa-play"></i> اختبار
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboard" class="section">
+            <div class="section-header">
+                <h1>لوحة المتصدرين</h1>
+                <div class="leaderboard-filters">
+                    <select class="filter-select" id="leaderboardCategory">
+                        <option value="overall">الأداء العام</option>
+                        <option value="text">توليد النصوص</option>
+                        <option value="code">البرمجة</option>
+                        <option value="reasoning">التفكير المنطقي</option>
+                        <option value="vision">الرؤية</option>
+                    </select>
+                    <select class="filter-select" id="leaderboardPeriod">
+                        <option value="all">جميع الأوقات</option>
+                        <option value="week">هذا الأسبوع</option>
+                        <option value="month">هذا الشهر</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="leaderboard-container glass-card">
+                <div class="leaderboard-item winner">
+                    <div class="rank-badge gold">
+                        <i class="fas fa-crown"></i>
+                        <span>1</span>
+                    </div>
+                    <div class="model-info">
+                        <h3>GPT-4 Turbo</h3>
+                        <p>OpenAI</p>
+                    </div>
+                    <div class="score-info">
+                        <div class="score-label">النتيجة الإجمالية</div>
+                        <div class="score-value">94.2</div>
+                    </div>
+                    <div class="stats-mini">
+                        <span><i class="fas fa-check-circle"></i> 45 اختبار</span>
+                        <span><i class="fas fa-arrow-up"></i> +2.3%</span>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-badge silver">
+                        <span>2</span>
+                    </div>
+                    <div class="model-info">
+                        <h3>Claude 3 Opus</h3>
+                        <p>Anthropic</p>
+                    </div>
+                    <div class="score-info">
+                        <div class="score-label">النتيجة الإجمالية</div>
+                        <div class="score-value">93.8</div>
+                    </div>
+                    <div class="stats-mini">
+                        <span><i class="fas fa-check-circle"></i> 42 اختبار</span>
+                        <span><i class="fas fa-arrow-up"></i> +1.8%</span>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-badge bronze">
+                        <span>3</span>
+                    </div>
+                    <div class="model-info">
+                        <h3>Gemini Pro 1.5</h3>
+                        <p>Google</p>
+                    </div>
+                    <div class="score-info">
+                        <div class="score-label">النتيجة الإجمالية</div>
+                        <div class="score-value">91.5</div>
+                    </div>
+                    <div class="stats-mini">
+                        <span><i class="fas fa-check-circle"></i> 38 اختبار</span>
+                        <span><i class="fas fa-arrow-up"></i> +3.1%</span>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-badge">
+                        <span>4</span>
+                    </div>
+                    <div class="model-info">
+                        <h3>GPT-3.5 Turbo</h3>
+                        <p>OpenAI</p>
+                    </div>
+                    <div class="score-info">
+                        <div class="score-label">النتيجة الإجمالية</div>
+                        <div class="score-value">87.3</div>
+                    </div>
+                    <div class="stats-mini">
+                        <span><i class="fas fa-check-circle"></i> 51 اختبار</span>
+                        <span><i class="fas fa-arrow-down"></i> -0.5%</span>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-badge">
+                        <span>5</span>
+                    </div>
+                    <div class="model-info">
+                        <h3>Claude 3 Sonnet</h3>
+                        <p>Anthropic</p>
+                    </div>
+                    <div class="score-info">
+                        <div class="score-label">النتيجة الإجمالية</div>
+                        <div class="score-value">86.9</div>
+                    </div>
+                    <div class="stats-mini">
+                        <span><i class="fas fa-check-circle"></i> 39 اختبار</span>
+                        <span><i class="fas fa-arrow-up"></i> +1.2%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compare Section -->
+        <section id="compare" class="section">
+            <div class="section-header">
+                <h1>مقارنة النماذج</h1>
+                <p>اختر نموذجين أو أكثر للمقارنة بينهم</p>
+            </div>
+
+            <div class="compare-selector glass-card">
+                <div class="model-selector">
+                    <label>النموذج الأول</label>
+                    <select class="select-model" id="compareModel1">
+                        <option value="">اختر نموذج</option>
+                        <option value="gpt4" selected>GPT-4 Turbo</option>
+                        <option value="claude3">Claude 3 Opus</option>
+                        <option value="gemini">Gemini Pro 1.5</option>
+                        <option value="gpt35">GPT-3.5 Turbo</option>
+                    </select>
+                </div>
+                <div class="model-selector">
+                    <label>النموذج الثاني</label>
+                    <select class="select-model" id="compareModel2">
+                        <option value="">اختر نموذج</option>
+                        <option value="gpt4">GPT-4 Turbo</option>
+                        <option value="claude3" selected>Claude 3 Opus</option>
+                        <option value="gemini">Gemini Pro 1.5</option>
+                        <option value="gpt35">GPT-3.5 Turbo</option>
+                    </select>
+                </div>
+                <div class="model-selector">
+                    <label>النموذج الثالث (اختياري)</label>
+                    <select class="select-model" id="compareModel3">
+                        <option value="" selected>اختر نموذج</option>
+                        <option value="gpt4">GPT-4 Turbo</option>
+                        <option value="claude3">Claude 3 Opus</option>
+                        <option value="gemini">Gemini Pro 1.5</option>
+                        <option value="gpt35">GPT-3.5 Turbo</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="compareBtn">
+                    <i class="fas fa-balance-scale"></i> مقارنة
+                </button>
+            </div>
+
+            <div class="comparison-results" id="comparisonResults">
+                <div class="comparison-grid">
+                    <div class="comparison-card glass-card">
+                        <h3>GPT-4 Turbo</h3>
+                        <div class="comparison-score primary">94.2</div>
+                        <div class="comparison-metrics">
+                            <div class="metric">
+                                <span>توليد النصوص</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill primary" style="width: 95%">95%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>البرمجة</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill primary" style="width: 92%">92%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>التفكير المنطقي</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill primary" style="width: 96%">96%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>الرؤية</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill primary" style="width: 93%">93%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>السرعة</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill primary" style="width: 88%">88%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-card glass-card">
+                        <h3>Claude 3 Opus</h3>
+                        <div class="comparison-score secondary">93.8</div>
+                        <div class="comparison-metrics">
+                            <div class="metric">
+                                <span>توليد النصوص</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill secondary" style="width: 94%">94%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>البرمجة</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill secondary" style="width: 95%">95%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>التفكير المنطقي</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill secondary" style="width: 92%">92%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>الرؤية</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill secondary" style="width: 95%">95%</div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span>السرعة</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill secondary" style="width: 91%">91%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-chart glass-card">
+                    <h3>مقارنة تفصيلية</h3>
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Creating Tests -->
+    <div class="modal" id="createTestModal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>إنشاء اختبار جديد</h2>
+                <button class="modal-close" id="closeTestModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>اسم الاختبار</label>
+                    <input type="text" class="form-input" placeholder="أدخل اسم الاختبار">
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea class="form-input" rows="3" placeholder="وصف الاختبار"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>الفئة</label>
+                    <select class="form-input">
+                        <option>توليد النصوص</option>
+                        <option>البرمجة</option>
+                        <option>الرؤية</option>
+                        <option>التفكير المنطقي</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>النماذج المستهدفة</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked> GPT-4 Turbo
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked> Claude 3 Opus
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox"> Gemini Pro 1.5
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox"> GPT-3.5 Turbo
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelTestBtn">إلغاء</button>
+                <button class="btn btn-primary" id="submitTestBtn">إنشاء الاختبار</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
